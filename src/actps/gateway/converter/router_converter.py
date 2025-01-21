@@ -3,6 +3,7 @@ from typing import List
 
 from src.actps.domain.pc import PC
 from src.actps.gateway.schemas import RouterResponse
+from src.actps.gateway.schemas.personal_computer_schemas import PCResponse
 
 
 class RouterConverter:
@@ -10,11 +11,20 @@ class RouterConverter:
     @classmethod
     def row_to_router(cls, router: Row) -> RouterResponse:
         return RouterResponse(
-            id=router.id,
+            id=router.router_id,
             model_name=router.model_name,
-            ip_address=router.ip_address,
-            hostname=router.hostname,
-            created_at=router.created_at
+            ip_address=router.router_ip,
+            hostname=router.router_hostname,
+            created_at=router.router_created_at,
+            computers=[
+                PCResponse(
+                    id=computer["computer_id"],
+                    ip_address=computer["computer_ip"],
+                    hostname=computer["computer_hostname"],
+                    router_id=router.router_id,
+                    created_at=computer["computer_created_at"]
+                ) for computer in router.computers
+            ] if router.computers is not None else []
         )
 
     @classmethod

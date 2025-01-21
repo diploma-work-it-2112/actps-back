@@ -37,9 +37,26 @@ class RouterViews:
         async with engine.begin() as conn:
             router_rows = (await conn.execute(
                 text("""
-                    select 
-                        *
-                    from router
+                    SELECT
+                    r.id AS router_id,
+                    r.model_name,
+                    r.ip_address AS router_ip,
+                    r.hostname AS router_hostname,
+                    r.created_at AS router_created_at,
+                    (
+                        SELECT json_agg(
+                            json_build_object(
+                                'computer_id', pc.id,
+                                'computer_ip', pc.ip_address,
+                                'computer_hostname', pc.hostname,
+                                'computer_created_at', pc.created_at
+                            )
+                        )
+                        FROM personal_computer pc
+                        WHERE pc.router_id = r.id
+                    ) AS computers
+                FROM router r 
+
                 """
                 )
             )).all()

@@ -1,5 +1,8 @@
 from datetime import datetime
+from typing import List
 from pydantic import BaseModel
+
+from .personal_computer_schemas import PCResponse
 
 
 class RouterRequest(BaseModel):
@@ -14,3 +17,4 @@ class RouterResponse(BaseModel):
     ip_address: str
     hostname: str
     created_at: datetime
+    computers: List[PCResponse]
