@@ -7,6 +7,8 @@ from src.actps.gateway.handler import (
 
     connect_pc_handler,
     get_all_pc_handler,
+
+    frontend_process_handler,
 )
 
 
@@ -21,4 +23,10 @@ def get_pc_router() -> APIRouter:
     router = APIRouter(tags=["PC"], prefix="/v1")
     router.post("/pc", status_code=200)(connect_pc_handler)
     router.get("/pc", status_code=200)(get_all_pc_handler)
+    return router
+
+
+def get_deamon_connection_router() -> APIRouter:
+    router = APIRouter(tags=["Deamon Connection"], prefix="/v1")
+    router.websocket("/ws/process/{name}")(frontend_process_handler)
     return router
