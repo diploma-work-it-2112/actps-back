@@ -4,7 +4,7 @@ from sqlalchemy import insert, select, delete, update
 from src.actps.core.repository import AbstractRepository
 from src.actps.domain.router.model import Router
 from .converter import router_to_dict, dict_to_router
-from .statements import insert_router, select_router_by_id, update_router, delete_router, select_router
+from .statements import insert_router, select_router_by_id, update_router, delete_router, select_router, select_router_by_ip
 
 
 class RouterRepository(AbstractRepository):
@@ -29,8 +29,20 @@ class RouterRepository(AbstractRepository):
             select_router_by_id,
             {"id": id}
         )
+        print(res)
         
         router = dict_to_router(res.one())
+
+        return router
+
+    async def get_by_ip(self, ip: str) -> Router:
+        res = await self.session.execute(
+            select_router_by_ip,
+            {"ip": ip}
+        )
+
+        router = dict_to_router(res.one())
+        print(router)
 
         return router
 
@@ -38,6 +50,7 @@ class RouterRepository(AbstractRepository):
         res = await self.session.execute(
             select_router
         )
+        print(res)
         res = res.all()
 
         return [dict_to_router(r) for r in res]

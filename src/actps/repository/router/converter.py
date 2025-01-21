@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from src.actps.domain.pc.personal_computer import PC
 from src.actps.domain.router.model import Router
 
 
@@ -16,11 +17,20 @@ def router_to_dict(model: Router):
 
 
 def dict_to_router(router):
+    print(router.computers)
     return Router(
-        id=router.id,
+        id=router.router_id,
         model_name=router.model_name,
-        ip_address=router.ip_address,
-        hostname=router.hostname,
-        created_at=router.created_at
+        ip_address=router.router_id,
+        hostname=router.router_hostname,
+        created_at=router.router_created_at,
+        computers=[
+            PC(
+                id=computer['computer_id'],
+                ip_address=computer['computer_ip'],
+                hostname=computer['computer_hostname'],
+                router_id=router.router_id,
+                created_at=computer['computer_created_at']
+            ) for computer in router.computers
+        ] if router.computers is not None else []
     )
-

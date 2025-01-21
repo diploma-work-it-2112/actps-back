@@ -9,7 +9,7 @@ class PC(AbstractBaseEntity):
         self,
         ip_address: str,
         hostname: str,
-        router_id: str = None,
+        router_id: int = None,
         created_at: datetime = None,
         id: int = None,
         reference = None
@@ -34,7 +34,7 @@ class PC(AbstractBaseEntity):
         return self._hostname
 
     @property
-    def router_id(self) -> str:
+    def router_id(self) -> int:
         return self._router_id
 
     @property

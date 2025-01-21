@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from src.actps.core.base_entity import AbstractBaseEntity
+from src.actps.domain.pc.personal_computer import PC
 
 
 class Router(AbstractBaseEntity):
@@ -10,6 +11,7 @@ class Router(AbstractBaseEntity):
         model_name: str,
         ip_address: str,
         hostname: str,
+        computers: list[PC] = [],
         created_at: datetime = None,
         id: int = None,
         reference = None
@@ -18,6 +20,7 @@ class Router(AbstractBaseEntity):
         self._id = id
         self._model_name = model_name
         self._ip_address = ip_address
+        self._computers = computers
         self._hostname = hostname
         self._created_at = created_at or datetime.utcnow()
 
@@ -36,6 +39,10 @@ class Router(AbstractBaseEntity):
     @property
     def model_name(self) -> str:
         return self._model_name
+
+    @property
+    def computers(self) -> list:
+        return self._computers
 
     @property
     def created_at(self) -> datetime:
