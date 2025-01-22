@@ -28,5 +28,5 @@ def get_pc_router() -> APIRouter:
 
 def get_deamon_connection_router() -> APIRouter:
     router = APIRouter(tags=["Deamon Connection"], prefix="/v1")
-    router.websocket("/ws/process/{name}")(frontend_process_handler)
+    router.websocket("/ws/process")(frontend_process_handler)
     return router
