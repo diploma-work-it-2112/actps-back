@@ -45,7 +45,8 @@ package_log = Table(
     Column("mac_destination", String(256), nullable=False),
     Column("port_source", String(256), nullable=False),
     Column("port_destination", String(256), nullable=False),
-    Column("host_name", String(256), nullable=True),
+    Column("web_host_name", String(256), nullable=True),
+    Column("pc_id", ForeignKey("personal_computer.id", ondelete="CASCADE"), nullable=True),
     Column("time", DateTime(timezone=True), nullable=False),
     Column("created_at", DateTime(timezone=True), nullable=True)
 )
