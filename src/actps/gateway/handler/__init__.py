@@ -1,5 +1,6 @@
 from .daemon_connection_handler import (
-    frontend_process_handler
+    frontend_process_handler,
+    frontend_system_load_handler,
 )
 
 from .router_handler import (
@@ -19,4 +20,5 @@ __all__ = [
     "connect_pc_handler",
     "get_all_pc_handler",
     "frontend_process_handler",
+    "frontend_system_load_handler",
 ]
