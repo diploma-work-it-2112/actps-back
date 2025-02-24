@@ -1,3 +1,6 @@
+from sqlalchemy import text
+
+
 insert_package_log = text("""
     insert into package_log(
         "message",

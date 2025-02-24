@@ -5,6 +5,9 @@ from src.actps.domain.pc.personal_computer import PC
 from src.actps.repository.router.repository import RouterRepository
 from src.actps.domain.router.model import Router
 
+from src.actps.repository.logs.package_log_repository import PackageLogRepository
+from src.actps.domain.logs import PackageLog
+
 
 class RepositoryFactory:
 
@@ -16,3 +19,5 @@ class RepositoryFactory:
             return RouterRepository(self.session_factory)
         elif obj_type == PC:
             return PCRepository(self.session_factory)
+        elif obj_type == PackageLog:
+            return PackageLogRepository(self.session_factory)

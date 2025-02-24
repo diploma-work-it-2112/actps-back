@@ -12,7 +12,7 @@ class PackageLog(AbstractBaseEntity):
         mac_source: str,
         mac_destination: str,
         port_source: str,
-        port_destinatin: str,
+        port_destination: str,
         time: datetime,
         web_host_name: str = None,
         pc_id: int = None,
@@ -27,9 +27,9 @@ class PackageLog(AbstractBaseEntity):
         self._ip_source = ip_source
         self._ip_destination = ip_destination 
         self._mac_source = mac_source
-        self._mac_destinations = mac_destination
+        self._mac_destination = mac_destination
         self._port_source = port_source
-        self._port_destination = port_destinatin
+        self._port_destination = port_destination
         self._time = time
         self._created_at = created_at or datetime.utcnow()
 
@@ -64,7 +64,7 @@ class PackageLog(AbstractBaseEntity):
 
     @property
     def mac_destination(self) -> str:
-        return self._mac_destinations
+        return self._mac_destination
 
     @property
     def port_source(self) -> str:
