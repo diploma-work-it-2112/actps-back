@@ -4,7 +4,7 @@ from sqlalchemy import insert, select, delete, update
 from src.actps.core.repository import AbstractRepository
 from src.actps.domain.pc import PC
 from .converter import pc_to_dict, dict_to_pc
-from .statements import insert_pc, select_pc_by_id, update_pc, delete_pc, select_pc
+from .statements import insert_pc, select_pc_by_id, update_pc, delete_pc, select_pc, select_pc_by_hostname
 
 
 class PCRepository(AbstractRepository):
@@ -32,6 +32,15 @@ class PCRepository(AbstractRepository):
         
         pc = dict_to_pc(res.one())
 
+        return pc
+
+    async def get_by_hostname(self, hostname: str) -> PC:
+        res = await self.session.execute(
+            select_pc_by_hostname,
+            {"hostname": hostname}
+        )
+
+        pc = dict_to_pc(res.one())
         return pc
 
     async def get_list(self) -> list[PC]:

@@ -35,6 +35,16 @@ select_pc_by_id = text("""
     from personal_computer where id=:id
 """)
 
+select_pc_by_hostname = text("""
+    select 
+        id,
+        ip_address,
+        hostname,
+        router_id,
+        created_at
+    from personal_computer where hostname=:hostname
+""")
+
 update_pc = text("""
     update personal_computer
     set 
