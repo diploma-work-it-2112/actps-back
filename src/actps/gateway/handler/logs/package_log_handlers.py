@@ -20,6 +20,6 @@ async def receive_package_log_from_pc_handler(data: PackageLogRequest):
 
 
 async def get_all_packages_logs_from_pc_by_hostname_handler(hostname: str):
-    logs = await PackageLogViews.get_all_packges_logs_from_pc_by_hostname_handler(hostname=hostname, engine=init_engine())
+    logs = await PackageLogViews.get_package_log_by_pc_hostname_view(pc_hostname=hostname, engine=init_engine())
 
     return logs

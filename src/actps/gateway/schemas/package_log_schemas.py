@@ -12,7 +12,7 @@ class PackageLogRequest(BaseModel):
     port_destination: str
     time: datetime
     web_host_name: Optional[str] = None
-    pc_host_name: Optional[int] = None
+    pc_host_name: Optional[str] = None
     message: Optional[str] = None
 
 

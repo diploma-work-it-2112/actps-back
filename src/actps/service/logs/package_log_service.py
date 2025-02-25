@@ -15,7 +15,7 @@ class PackageLogService:
 
         async with uow as uow:
             pc_repository = await uow.get_repository(PC)
-            pc_id = await pc_repository.get_by_hostname(data.pc_hostname)
+            pc = await pc_repository.get_by_hostname(data.pc_host_name)
             package_log = PackageLog(
                 ip_source=data.ip_source,
                 ip_destination=data.ip_destination,
@@ -25,10 +25,8 @@ class PackageLogService:
                 port_destination=data.port_destination,  
                 time=data.time,
                 web_host_name=data.web_host_name,
-                pc_id=pc_id,
+                pc_id=pc.id,
                 message=data.message,
-                id=data.id,
-                created_at=data.created_at
             )
 
             await uow.add(package_log)
