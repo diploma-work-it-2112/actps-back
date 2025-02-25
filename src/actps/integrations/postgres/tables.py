@@ -39,6 +39,7 @@ package_log = Table(
     mapper_registry.metadata,
     Column("id", BigInteger, primary_key=True, index=True, autoincrement=True),
     Column("message", String(512), nullable=True),
+    # Column("type", Enum)
     Column("ip_source", String(256), nullable=False),
     Column("ip_destination", String(256), nullable=False),
     Column("mac_source", String(256), nullable=False),

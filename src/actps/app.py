@@ -5,7 +5,8 @@ from fastapi.staticfiles import StaticFiles
 from src.actps.gateway.urls import (
     get_router_router,
     get_pc_router,
-    get_deamon_connection_router
+    get_deamon_connection_router,
+    get_logs_router,
 )
 from src.actps.config import FRONT_URL
 
@@ -33,4 +34,5 @@ app.add_middleware(
 app.include_router(get_router_router())
 app.include_router(get_pc_router())
 app.include_router(get_deamon_connection_router())
+app.include_router(get_logs_router())
 
