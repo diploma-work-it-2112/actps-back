@@ -1,4 +1,8 @@
+from sqlalchemy import Row 
+from typing import List 
+
 from src.actps.domain.logs import PackageLog
+from src.actps.gateway.schemas import PackageLogResponse
 
 
 class PackageLogConverter:
