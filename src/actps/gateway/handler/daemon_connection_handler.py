@@ -10,8 +10,8 @@ connections = {
     "system_load": {}
 }
 
-async def connect_to_app(endpoint, conn_id):
-    url = f"http://127.0.0.1:8080/ws/{endpoint}"
+async def connect_to_app(endpoint, conn_id, endpoint_ip):
+    url = f"http://{endpoint_ip}:8080/ws/{endpoint}"
     endpoint = endpoint.split("?")[0]
     try:
         async with aiohttp.ClientSession() as session:
@@ -27,11 +27,11 @@ async def connect_to_app(endpoint, conn_id):
                 
 
 
-async def frontend_process_handler(ws: WebSocket):
+async def frontend_process_handler(ws: WebSocket, ip_addres: str):
     await ws.accept()
     connection_id = str(uuid.uuid4())
     connections["process"][connection_id] = ws
-    task = asyncio.create_task(connect_to_app(f"process?sort_by=name", connection_id))
+    task = asyncio.create_task(connect_to_app(f"process?sort_by=name", connection_id, ip_addres))
     try:
         while True:
             await ws.receive_text()

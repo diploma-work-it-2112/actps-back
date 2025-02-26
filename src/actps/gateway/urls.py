@@ -33,13 +33,13 @@ def get_pc_router() -> APIRouter:
 
 def get_deamon_connection_router() -> APIRouter:
     router = APIRouter(tags=["Deamon Connection"], prefix="/v1")
-    router.websocket("/ws/process")(frontend_process_handler)
+    router.websocket("/ws/process/{ip_addres}")(frontend_process_handler)
     router.websocket("/ws/system_load")(frontend_system_load_handler)
     return router
 
 
 def get_logs_router() -> APIRouter:
-    router = APIRouter(tags=["Router"], prefix="/v1")
+    router = APIRouter(tags=["Logs"], prefix="/v1")
     router.post("/log/package", status_code=200)(receive_package_log_from_pc_handler)
     router.get("/log/package/{hostname}", status_code=200)(get_all_packages_logs_from_pc_by_hostname_handler)
     return router
