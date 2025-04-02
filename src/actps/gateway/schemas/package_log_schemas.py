@@ -8,8 +8,8 @@ class PackageLogRequest(BaseModel):
     ip_destination: str
     mac_source: str
     mac_destination: str
-    port_source: str
-    port_destination: str
+    port_source: Optional[str] = None
+    port_destination: Optional[str] = None
     time: datetime
     web_host_name: Optional[str] = None
     pc_host_name: Optional[str] = None

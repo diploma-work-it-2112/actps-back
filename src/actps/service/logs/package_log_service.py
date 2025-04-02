@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from src.actps.core.unit_of_work import UnitOfWork 
 from src.actps.domain.logs import PackageLog 
 from src.actps.domain.pc import PC
+from src.actps.config import DOMAIN_BLOCK_LIST_FILE_PATH
 
 
 class PackageLogService:
@@ -12,6 +13,12 @@ class PackageLogService:
         data: BaseModel,
         uow: UnitOfWork
     ) -> PackageLog:
+
+        with open(DOMAIN_BLOCK_LIST_FILE_PATH, "a") as f:
+            f.write(data.web_host_name + "\n")
+            print("save in block list")
+
+        
 
         async with uow as uow:
             pc_repository = await uow.get_repository(PC)
