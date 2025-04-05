@@ -7,6 +7,7 @@ from src.actps.integrations.postgres.engine import get_session, init_engine
 from src.actps.core.unit_of_work import UnitOfWork
 from src.actps.service.personal_computer import PCService
 from src.actps.views import PCViews
+from src.actps.gateway.schemas import AllWorkingHostsResponse
 
 
 service = PCService()
@@ -40,3 +41,15 @@ async def pc_heartbeat_handler(request: Request, data: PCHeartbeatRequest):
         cache_service=redis_service
     )
     return 200
+
+
+async def get_all_working_hosts():
+    keys = redis_service.get_all_keys()
+    res = {}
+
+    for key in keys:
+        value = redis_service.get(key)
+        res[key] = value
+    
+    response = AllWorkingHostsResponse(result=res)
+    return response

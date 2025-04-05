@@ -1,6 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel
-from typing import Optional
+from typing import Dict, Optional
 
 
 class PCRequest(BaseModel):
@@ -18,3 +18,7 @@ class PCResponse(BaseModel):
 
 class PCHeartbeatRequest(BaseModel):
     hostname: str
+
+
+class AllWorkingHostsResponse(BaseModel):
+    result: Dict

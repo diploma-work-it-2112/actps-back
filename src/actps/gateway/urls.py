@@ -8,6 +8,7 @@ from src.actps.gateway.handler import (
     connect_pc_handler,
     get_all_pc_handler,
     pc_heartbeat_handler,
+    get_all_working_hosts,
 
     frontend_process_handler,
     frontend_system_load_handler,
@@ -30,6 +31,7 @@ def get_pc_router() -> APIRouter:
     router.post("/pc", status_code=200)(connect_pc_handler)
     router.get("/pc", status_code=200)(get_all_pc_handler)
     router.post("/pc/hearbeat", status_code=200)(pc_heartbeat_handler)
+    router.get("/pc/hearbeat", status_code=200)(get_all_working_hosts)
     return router
 
 

@@ -1,6 +1,6 @@
 import redis
 
-from typing import Optional
+from typing import List, Optional
 
 from src.actps.core.cache_service import AbstractCacheService
 from src.actps.config import REDIS_URL, REDIS_PORT, REDIS_PASSWORD
@@ -12,7 +12,7 @@ class RedisCacheService(AbstractCacheService):
             self, 
             host: str = REDIS_URL, 
             port: int = REDIS_PORT, 
-            db: int = 0, 
+            db: int = 1, 
             password: Optional[str] = REDIS_PASSWORD
     ):
         self._client = redis.Redis(host=host, port=port, db=db, password=password)
@@ -27,3 +27,12 @@ class RedisCacheService(AbstractCacheService):
     def exists(self, key: str) -> bool:
         return self._client.exists(key) > 0
 
+    def get_all_keys(self) -> List:
+        cursor = 0
+        keys = []
+        while True:
+            cursor, keys = self._client.scan(cursor, count=50)
+            keys.extend(keys)
+            if cursor == 0:
+                break
+        return keys

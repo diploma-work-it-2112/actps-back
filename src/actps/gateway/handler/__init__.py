@@ -12,6 +12,7 @@ from .personal_computer_handler import (
     connect_pc_handler,
     get_all_pc_handler,
     pc_heartbeat_handler,
+    get_all_working_hosts,
 )
 
 
@@ -21,6 +22,7 @@ __all__ = [
     "connect_pc_handler",
     "get_all_pc_handler",
     "pc_heartbeat_handler",
+    "get_all_working_hosts",
     "frontend_process_handler",
     "frontend_system_load_handler",
 ]
