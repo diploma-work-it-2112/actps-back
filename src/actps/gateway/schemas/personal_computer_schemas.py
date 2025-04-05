@@ -15,3 +15,7 @@ class PCResponse(BaseModel):
     hostname: str
     router_id: Optional[int] = None
     created_at: datetime
+
+
+class PCHeartbeatRequest(BaseModel):
+    hostname: str
