@@ -1,6 +1,6 @@
 from fastapi import Request
 
-from src.actps.gateway.schemas.personal_computer_schemas import PCRequest
+from src.actps.gateway.schemas.personal_computer_schemas import PCRequest, PCHeartbeatRequest
 from src.actps.integrations.redis.redis import RedisCacheService
 from src.actps.repository.repository_factory import RepositoryFactory
 from src.actps.integrations.postgres.engine import get_session, init_engine
@@ -30,3 +30,13 @@ async def get_all_pc_handler():
     psc = await PCViews.get_all_pcs_view(engine=init_engine())
 
     return psc
+
+
+async def pc_heartbeat_handler(request: Request, data: PCHeartbeatRequest):
+    await service.heartbeat_pc_service(
+        data=data,
+        uow=uow,
+        pc_ip=request.client.host,
+        cache_service=redis_service
+    )
+    return 200

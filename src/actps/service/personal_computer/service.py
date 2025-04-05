@@ -49,3 +49,25 @@ class PCService:
 
 
         return pc
+
+
+    async def heartbeat_pc_service(
+        self,
+        data: BaseModel,
+        uow: UnitOfWork,
+        pc_ip: str,
+        cache_service: AbstractCacheService
+    ):
+        
+        async with uow as uow:
+            pc_ip_from_cache = cache_service.get(data.hostname)
+            if pc_ip_from_cache != pc_ip:
+                pc_repo = await uow.get_repository(PC)
+                pc = await pc_repo.get_by_hostname(data.hostname)
+                pc.update_ip(pc_ip)
+                await uow.update(pc)
+
+            cache_service.set(data.hostname, pc_ip, 40)
+
+            await uow.commit()
+

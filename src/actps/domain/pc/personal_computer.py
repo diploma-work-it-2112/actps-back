@@ -41,3 +41,6 @@ class PC(AbstractBaseEntity):
     def created_at(self) -> datetime:
         return self._created_at
 
+    def update_ip(self, new_ip):
+        self._ip_address = new_ip
+

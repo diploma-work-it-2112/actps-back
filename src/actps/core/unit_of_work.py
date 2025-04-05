@@ -38,7 +38,7 @@ class AbstractUnitOfWork(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def update(eslf, model: AbstractBaseEntity):
+    async def update(self, model: AbstractBaseEntity):
         raise NotImplementedError
 
 
