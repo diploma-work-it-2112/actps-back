@@ -6,12 +6,14 @@ insert_router = text("""
         "model_name",
         "ip_address",
         "hostname",
-        "created_at"
+        "created_at",
+        "color"
     ) values (
         :model_name,
         :ip_address,
         :hostname,
-        :created_at
+        :created_at,
+        :color
     ) returning id
 """)
 
@@ -22,6 +24,7 @@ select_router = text("""
         r.ip_address AS router_ip,
         r.hostname AS router_hostname,
         r.created_at AS router_created_at,
+        r.color AS router_color,
         (
             SELECT json_agg(
                 json_build_object(
@@ -34,7 +37,7 @@ select_router = text("""
             FROM personal_computer pc
             WHERE pc.router_id = r.id
         ) AS computers
-    FROM router r where r.ip_address=:ip
+    FROM router r
 """)
 
 select_router_by_id = text("""
@@ -44,6 +47,7 @@ select_router_by_id = text("""
         r.ip_address AS router_ip,
         r.hostname AS router_hostname,
         r.created_at AS router_created_at,
+        r.color AS router_color,
         (
             SELECT json_agg(
                 json_build_object(
@@ -66,6 +70,7 @@ select_router_by_ip = text("""
         r.ip_address AS router_ip,
         r.hostname AS router_hostname,
         r.created_at AS router_created_at,
+        r.color AS router_color,
         (
             SELECT json_agg(
                 json_build_object(
@@ -93,5 +98,9 @@ update_router = text("""
 
 delete_router = text("""
     delete from router where id=:id
+""")
+
+get_last_router = text("""
+    SELECT * FROM router ORDER BY id DESC LIMIT 1
 """)
 

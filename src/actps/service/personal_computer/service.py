@@ -1,5 +1,7 @@
 from pydantic import BaseModel
+from sqlalchemy.orm.exc import NoResultFound
 
+from src.actps.core.cache_service import AbstractCacheService
 from src.actps.core.unit_of_work import UnitOfWork 
 from src.actps.domain.pc import PC
 from src.actps.domain.router import Router
@@ -10,29 +12,40 @@ class PCService:
     async def connect_pc(
         self,
         data: BaseModel,
-        uow: UnitOfWork
+        uow: UnitOfWork,
+        pc_ip: str,
+        cache_service: AbstractCacheService
     ) -> PC:
 
         async with uow as uow:
             try:
                 router_repo = await uow.get_repository(Router)
                 router = await router_repo.get_by_ip(data.router_ip)
-                print(router)
-            except Exception as e:
-                print(e)
-                # router = Router(
-                #     model_name="router name",
-                #     ip_address=data.router_ip,
-                #     hostname=f"router {data.router_ip}"
-                # )
-                # router = await uow.add(router)
+            except NoResultFound as e:
+                router_repo = await uow.get_repository(Router)
+                list_router = await router_repo.get_list()
+                if len(list_router) != 0:
+                    color_index = list_router[-1].id 
+                else:
+                    color_index = 1
+                router = Router(
+                    model_name="router name",
+                    ip_address=data.router_ip,
+                    hostname=f"router {data.router_ip}",
+                    color_index=color_index
+                )
+                router = await uow.add(router)
 
             pc = PC(
-                ip_address=data.ip_address,
+                ip_address=pc_ip,
                 hostname=data.hostname,
                 router_id=router.id
             )
             pc = await uow.add(pc)
+            
+            cache_service.set(pc.hostname, pc.ip_address, 40)
+
             await uow.commit()
+
 
         return pc

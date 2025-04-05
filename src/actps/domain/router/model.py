@@ -1,3 +1,5 @@
+import colorsys
+
 from datetime import datetime
 
 from src.actps.core.base_entity import AbstractBaseEntity
@@ -11,6 +13,8 @@ class Router(AbstractBaseEntity):
         model_name: str,
         ip_address: str,
         hostname: str,
+        color: str = None,
+        color_index: int = None,
         computers: list[PC] = [],
         created_at: datetime = None,
         id: int = None,
@@ -23,6 +27,7 @@ class Router(AbstractBaseEntity):
         self._computers = computers
         self._hostname = hostname
         self._created_at = created_at or datetime.utcnow()
+        self._color = color or self.generate_color(color_index)
 
     @property
     def id(self) -> int:
@@ -47,4 +52,13 @@ class Router(AbstractBaseEntity):
     @property
     def created_at(self) -> datetime:
         return self._created_at
+    
+    @property
+    def color(self) -> str:
+        return self._color
 
+    def generate_color(self, index, saturation=0.5, brightness=0.95):
+        golden_ratio_conjugate = 0.618033988749895
+        h = (index * golden_ratio_conjugate) % 1  
+        r, g, b = colorsys.hsv_to_rgb(h, saturation, brightness)
+        return f"#{int(r * 255):02X}{int(g * 255):02X}{int(b * 255):02X}"

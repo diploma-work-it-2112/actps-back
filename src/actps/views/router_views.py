@@ -43,6 +43,7 @@ class RouterViews:
                     r.ip_address AS router_ip,
                     r.hostname AS router_hostname,
                     r.created_at AS router_created_at,
+                    r.color as router_color,
                     (
                         SELECT json_agg(
                             json_build_object(

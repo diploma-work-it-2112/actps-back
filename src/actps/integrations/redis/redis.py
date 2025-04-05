@@ -2,8 +2,8 @@ import redis
 
 from typing import Optional
 
-from actps.core.cache_service import AbstractCacheService
-from actps.config import REDIS_URL, REDIS_PORT, REDIS_PASSWORD
+from src.actps.core.cache_service import AbstractCacheService
+from src.actps.config import REDIS_URL, REDIS_PORT, REDIS_PASSWORD
 
 
 class RedisCacheService(AbstractCacheService):

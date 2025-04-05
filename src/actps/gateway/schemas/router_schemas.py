@@ -18,3 +18,4 @@ class RouterResponse(BaseModel):
     hostname: str
     created_at: datetime
     computers: List[PCResponse]
+    color: str
