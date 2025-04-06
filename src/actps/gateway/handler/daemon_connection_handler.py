@@ -27,11 +27,11 @@ async def connect_to_app(endpoint, conn_id, endpoint_ip):
                 
 
 
-async def frontend_process_handler(ws: WebSocket, ip_addres: str):
+async def frontend_process_handler(ws: WebSocket, ip_address: str):
     await ws.accept()
     connection_id = str(uuid.uuid4())
     connections["process"][connection_id] = ws
-    task = asyncio.create_task(connect_to_app(f"process?sort_by=name", connection_id, ip_addres))
+    task = asyncio.create_task(connect_to_app(f"process?sort_by=name", connection_id, ip_address))
     try:
         while True:
             await ws.receive_text()
@@ -39,11 +39,11 @@ async def frontend_process_handler(ws: WebSocket, ip_addres: str):
         connections["process"].pop(connection_id, None)
         task.cancel()
 
-async def frontend_system_load_handler(ws: WebSocket):
+async def frontend_system_load_handler(ws: WebSocket, ip_address: str):
     await ws.accept()
     connection_id = str(uuid.uuid4())
     connections["system_load"][connection_id] = ws
-    task = asyncio.create_task(connect_to_app(f"system_load", connection_id))
+    task = asyncio.create_task(connect_to_app(f"system_load", connection_id, ip_address))
     try:
         while True:
             await ws.receive_text()

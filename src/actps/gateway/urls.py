@@ -30,15 +30,15 @@ def get_pc_router() -> APIRouter:
     router = APIRouter(tags=["PC"], prefix="/v1")
     router.post("/pc", status_code=200)(connect_pc_handler)
     router.get("/pc", status_code=200)(get_all_pc_handler)
-    router.post("/pc/hearbeat", status_code=200)(pc_heartbeat_handler)
-    router.get("/pc/hearbeat", status_code=200)(get_all_working_hosts)
+    router.post("/pc/heartbeat", status_code=200)(pc_heartbeat_handler)
+    router.get("/pc/heartbeat", status_code=200)(get_all_working_hosts)
     return router
 
 
 def get_deamon_connection_router() -> APIRouter:
     router = APIRouter(tags=["Deamon Connection"], prefix="/v1")
-    router.websocket("/ws/process/{ip_addres}")(frontend_process_handler)
-    router.websocket("/ws/system_load")(frontend_system_load_handler)
+    router.websocket("/ws/process/{ip_address}")(frontend_process_handler)
+    router.websocket("/ws/system_load/{ip_address}")(frontend_system_load_handler)
     return router
 
 
