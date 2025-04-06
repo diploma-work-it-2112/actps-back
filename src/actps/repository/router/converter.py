@@ -11,7 +11,8 @@ def router_to_dict(model: Router):
         "ip_address": model.ip_address,
         "hostname": model.hostname,
         "created_at": model.created_at,
-        "color": model.color
+        "color": model.color,
+        "group_name": model.group_name,
     }
 
     return model_dict
@@ -33,5 +34,6 @@ def dict_to_router(router):
                 created_at=computer['computer_created_at']
             ) for computer in router.computers
         ] if router.computers is not None else [],
-        color=router.router_color
+        color=router.router_color,
+        group_name=router.router_group_name
     )

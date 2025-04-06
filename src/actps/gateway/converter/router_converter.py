@@ -17,6 +17,7 @@ class RouterConverter:
             hostname=router.router_hostname,
             created_at=router.router_created_at,
             color=router.router_color,
+            group_name=router.router_group_name,
             computers=[
                 PCResponse(
                     id=computer["computer_id"],

@@ -30,6 +30,7 @@ router = Table(
     Column("model_name", String(256), nullable=False),
     Column("ip_address", String(256), nullable=False),
     Column("color", String(8), nullable=False),
+    Column("group_name", String(256), nullable=True),
     Column("hostname", String(256), nullable=False),
     Column("created_at", DateTime(timezone=True), nullable=False)
 )

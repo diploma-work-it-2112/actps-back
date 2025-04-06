@@ -7,13 +7,15 @@ insert_router = text("""
         "ip_address",
         "hostname",
         "created_at",
-        "color"
+        "color",
+        "group_name"
     ) values (
         :model_name,
         :ip_address,
         :hostname,
         :created_at,
-        :color
+        :color,
+        :group_name
     ) returning id
 """)
 
@@ -25,6 +27,7 @@ select_router = text("""
         r.hostname AS router_hostname,
         r.created_at AS router_created_at,
         r.color AS router_color,
+        r.group_name AS router_group_name,
         (
             SELECT json_agg(
                 json_build_object(
@@ -48,6 +51,7 @@ select_router_by_id = text("""
         r.hostname AS router_hostname,
         r.created_at AS router_created_at,
         r.color AS router_color,
+        r.group_name AS router_group_name,
         (
             SELECT json_agg(
                 json_build_object(
