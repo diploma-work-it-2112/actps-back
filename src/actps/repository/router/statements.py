@@ -75,6 +75,7 @@ select_router_by_ip = text("""
         r.hostname AS router_hostname,
         r.created_at AS router_created_at,
         r.color AS router_color,
+        r.group_name AS router_group_name,
         (
             SELECT json_agg(
                 json_build_object(
@@ -96,7 +97,8 @@ update_router = text("""
     set 
         model_name=:model_name,
         ip_address=:ip_address,
-        hostname=:hostname
+        color=:color,
+        group_name=:group_name
     where id=:id
 """)
 

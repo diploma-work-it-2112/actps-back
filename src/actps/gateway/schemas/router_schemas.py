@@ -21,3 +21,12 @@ class RouterResponse(BaseModel):
     computers: List[PCResponse]
     color: str
     group_name: Optional[str] = None
+
+
+class RouterUpdateRequest(BaseModel):
+    id: int 
+    hostname: str
+    ip_address: str
+    new_model_name: Optional[str] = None
+    new_color: Optional[str] = None
+    new_group_name: Optional[str] = None

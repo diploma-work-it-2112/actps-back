@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from src.actps.gateway.handler import (
     connect_router_handler,
     get_all_routers_handler,
+    update_router_handler,
 
     connect_pc_handler,
     get_all_pc_handler,
@@ -23,6 +24,7 @@ def get_router_router() -> APIRouter:
     router = APIRouter(tags=["Router"], prefix="/v1")
     router.post("/router", status_code=200)(connect_router_handler)
     router.get("/router", status_code=200)(get_all_routers_handler)
+    router.patch("/router", status_code=200)(update_router_handler)
     return router
 
 

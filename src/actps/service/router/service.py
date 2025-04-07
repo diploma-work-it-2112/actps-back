@@ -32,3 +32,24 @@ class RouterService:
             await uow.commit()
 
         return router
+
+
+    async def update_router(
+        self,
+        data: BaseModel,
+        uow: UnitOfWork
+    ):
+        async with uow as uow:
+            router = await uow.get(data.id, Router)
+            if router.hostname != data.hostname:
+                raise ValueError("Wrong hostname and id")
+            router.update(
+                ip_address=data.ip_address,
+                new_model_name=data.new_model_name,
+                new_color=data.new_color,
+                new_group_name=data.new_group_name
+            )
+            await uow.update(router)
+
+            await uow.commit()
+

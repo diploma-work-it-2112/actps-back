@@ -1,5 +1,5 @@
 from src.actps.core.unit_of_work import UnitOfWork
-from src.actps.gateway.schemas.router_schemas import RouterRequest
+from src.actps.gateway.schemas.router_schemas import RouterRequest, RouterUpdateRequest
 from src.actps.repository import RepositoryFactory
 from src.actps.service.router import RouterService
 from src.actps.integrations.postgres.engine import get_session, init_engine
@@ -23,3 +23,12 @@ async def get_all_routers_handler():
     routers = await RouterViews.get_all_routers_view(engine=init_engine())
 
     return routers
+
+
+async def update_router_handler(data: RouterUpdateRequest):
+    await service.update_router(
+        data=data,
+        uow=uow
+    )
+
+    return 200

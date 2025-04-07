@@ -6,6 +6,7 @@ from .daemon_connection_handler import (
 from .router_handler import (
     connect_router_handler,
     get_all_routers_handler,
+    update_router_handler,
 )
 
 from .personal_computer_handler import (
@@ -19,6 +20,7 @@ from .personal_computer_handler import (
 __all__ = [
     "connect_router_handler",
     "get_all_routers_handler",
+    "update_router_handler",
     "connect_pc_handler",
     "get_all_pc_handler",
     "pc_heartbeat_handler",

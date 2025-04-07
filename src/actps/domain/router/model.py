@@ -69,7 +69,9 @@ class Router(AbstractBaseEntity):
         r, g, b = colorsys.hsv_to_rgb(h, saturation, brightness)
         return f"#{int(r * 255):02X}{int(g * 255):02X}{int(b * 255):02X}"
 
-    def update(self, new_model_name=None, new_color=None, new_group_name=None):
+    def update(self, ip_address=None, new_model_name=None, new_color=None, new_group_name=None):
+        if self._ip_address != ip_address:
+            self._ip_address = ip_address
         self._model_name = new_model_name or self._model_name
         self._color = new_color or self._color
         self._group_name = new_group_name or self._group_name
