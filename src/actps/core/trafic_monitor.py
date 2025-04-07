@@ -61,3 +61,17 @@ class AbstractTraficParser(ABC):
     @abstractmethod
     def dns_parse(self, packet):
         raise NotImplementedError
+
+
+class AbstractTraficStorageManager(ABC):
+    @abstractmethod
+    def write(self, logs):
+        pass
+
+    @abstractmethod
+    def ndjson_write(self, logs):
+        pass
+
+    @abstractmethod
+    def ndjson_read(self, year: int, month: int, day: int, start_hour:int, end_hour: int, depth: int):
+        pass

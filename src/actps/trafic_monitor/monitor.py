@@ -1,12 +1,12 @@
 from scapy.all import sniff, Ether, IP, TCP, UDP, ICMP, Raw, ARP, IPv6, DNS, DNSQR
 import time
 
-from src.actps.core.trafic_monitor import AbstractTraficMonitoring, AbstractTraficParser
+from src.actps.core.trafic_monitor import AbstractTraficMonitoring, AbstractTraficParser, AbstractTraficStorageManager
 
 
 class TraficMonitor(AbstractTraficMonitoring):
 
-    def __init__(self, log_writer, log_parser: AbstractTraficParser):
+    def __init__(self, log_writer: AbstractTraficStorageManager, log_parser: AbstractTraficParser):
         self.logs = []
         self.log_writer = log_writer
         self.log_parser = log_parser
@@ -34,4 +34,5 @@ class TraficMonitor(AbstractTraficMonitoring):
 
     
     def write_logs(self):
-        pass
+        self.log_writer.write(self.logs)
+        self.logs = []
