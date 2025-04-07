@@ -12,10 +12,6 @@ class AbstractTraficMonitoring(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def parce_package(self, packet):
-        raise NotImplementedError
-
-    @abstractmethod
     def monitor(self, packet):
         raise NotImplementedError
 
