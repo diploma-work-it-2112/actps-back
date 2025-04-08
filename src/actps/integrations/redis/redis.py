@@ -36,3 +36,18 @@ class RedisCacheService(AbstractCacheService):
             if cursor == 0:
                 break
         return keys
+
+
+    def xadd(self, strema_key, data):
+        self._client.xadd(strema_key, data, id="*")
+
+
+    def xread(self, stream_key, min, max, count):
+        self._client.xrange(stream_key, min=min, max=max, count=count)
+
+
+    def xtrim(self, stream_key, maxlen):
+        self._client.xtrim(stream_key, maxlen=maxlen)
+
+    def xdel(self, stream_key, ids):
+        self._client.xdel(stream_key, *ids)
