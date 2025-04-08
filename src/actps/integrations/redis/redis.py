@@ -39,7 +39,10 @@ class RedisCacheService(AbstractCacheService):
 
 
     def xadd(self, strema_key, data):
-        self._client.xadd(strema_key, data, id="*")
+        try:
+            self._client.xadd(strema_key, data, id="*")
+        except:
+            pass
 
 
     def xread(self, stream_key, min, max, count):
@@ -51,3 +54,6 @@ class RedisCacheService(AbstractCacheService):
 
     def xdel(self, stream_key, ids):
         self._client.xdel(stream_key, *ids)
+
+    def xlen(self, stream_key):
+        return self._client.xlen(stream_key)

@@ -16,6 +16,7 @@ from src.actps.config import FRONT_URL
 from src.actps.trafic_monitor.json_parser import ScapyJSONTraficParse
 from src.actps.trafic_monitor.monitor import TraficMonitor
 from src.actps.trafic_monitor.trafic_storage_manager import TraficStorageManager
+from src.actps.gateway.handler.trafic_monitoring_handler import redis_trafic_monitor_session
 
 
 app = FastAPI(
@@ -55,6 +56,8 @@ parser = ScapyJSONTraficParse()
 trafic_monitor = TraficMonitor(
     log_writer=trafic_storage_manager,
     log_parser=parser,
+    cache_service=redis_trafic_monitor_session,
+    stream_key="trafic_logs_key"
 )
 
 if __name__ == "__main__":

@@ -59,8 +59,10 @@ class ScapyJSONTraficParse(AbstractTraficParser):
         res['ip_dst'] = packet[IP].dst
         res['ip_ttl'] = packet[IP].ttl
         res['ip_proto'] = packet[IP].proto
-        res['ip_flags'] = str(packet[IP].flags)
-        res['ip_options'] = packet[IP].options
+        if packet[IP].flags:
+            res['ip_flags'] = str(packet[IP].flags)
+        if packet[IP].options:
+            res['ip_options'] = packet[IP].options
         return res
 
     def tcp_parse(self, packet) -> dict:
