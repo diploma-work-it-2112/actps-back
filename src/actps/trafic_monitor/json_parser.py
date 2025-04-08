@@ -7,41 +7,44 @@ from src.actps.core.trafic_monitor import AbstractTraficParser
 class ScapyJSONTraficParse(AbstractTraficParser):
 
     def parce(self, packet):
-        log_data = {}
+        try:
+            log_data = {}
 
-        if packet.haslayer(Ether):
-            log_data.update(self.ether_parse(packet))
+            if packet.haslayer(Ether):
+                log_data.update(self.ether_parse(packet))
 
-        if packet.haslayer(IP):
-            log_data.update(self.ip_parse(packet))
+            if packet.haslayer(IP):
+                log_data.update(self.ip_parse(packet))
 
-        if packet.haslayer(TCP):
-            log_data.update(self.tcp_parse(packet))
+            if packet.haslayer(TCP):
+                log_data.update(self.tcp_parse(packet))
 
-        elif packet.haslayer(UDP):
-            log_data.update(self.udp_parse(packet))
+            elif packet.haslayer(UDP):
+                log_data.update(self.udp_parse(packet))
 
-        elif packet.haslayer(ICMP):
-            log_data.update(self.icmp_parse(packet))
+            elif packet.haslayer(ICMP):
+                log_data.update(self.icmp_parse(packet))
 
-        if packet.haslayer(IPv6):
-            log_data.update(self.ipv6_parse(packet))
+            if packet.haslayer(IPv6):
+                log_data.update(self.ipv6_parse(packet))
 
-        if packet.haslayer(ARP):
-            log_data.update(self.arp_parse(packet))
+            if packet.haslayer(ARP):
+                log_data.update(self.arp_parse(packet))
 
-        if packet.haslayer(TCP) and packet.haslayer(Raw):
-            tcp_layer = packet[TCP]
-            if tcp_layer.sport == 80 or tcp_layer.dport == 80:
-                log_data.update(self.http_parse(packet))
-            elif tcp_layer.sport == 443 or tcp_layer.dport == 443:
-                log_data.update(self.https_parse(packet))
+            if packet.haslayer(TCP) and packet.haslayer(Raw):
+                tcp_layer = packet[TCP]
+                if tcp_layer.sport == 80 or tcp_layer.dport == 80:
+                    log_data.update(self.http_parse(packet))
+                elif tcp_layer.sport == 443 or tcp_layer.dport == 443:
+                    log_data.update(self.https_parse(packet))
 
-        if packet.haslayer(DNS):
-            log_data.update(self.dns_parse(packet))
+            if packet.haslayer(DNS):
+                log_data.update(self.dns_parse(packet))
 
-        log_data["time"] = time.time()
-        return log_data
+            log_data["time"] = time.time()
+            return log_data
+        except Exception as e:
+            print("Parse error", e)
 
     def ether_parse(self, packet) -> dict:
         res = {}
@@ -54,10 +57,10 @@ class ScapyJSONTraficParse(AbstractTraficParser):
         res = {}
         res['ip_src'] = packet[IP].src
         res['ip_dst'] = packet[IP].dst
-        res['ttl'] = packet[IP].ttl
+        res['ip_ttl'] = packet[IP].ttl
         res['ip_proto'] = packet[IP].proto
-        res['flags'] = packet[IP].flags
-        res['options'] = packet[IP].options
+        res['ip_flags'] = str(packet[IP].flags)
+        res['ip_options'] = packet[IP].options
         return res
 
     def tcp_parse(self, packet) -> dict:

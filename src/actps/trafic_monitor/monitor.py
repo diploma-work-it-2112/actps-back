@@ -14,13 +14,16 @@ class TraficMonitor(AbstractTraficMonitoring):
     def monitor(self, packet):
         log = self.log_parser.parce(packet)
         self.logs.append(log)
+        print(len(self.logs))
 
         if len(self.logs) == 100:
+            print("write")
             self.write_logs()
 
 
     def run(self):
         try:
+            print("run")
             sniff(prn=self.monitor, store=False)
         except Exception as e:
             print(1)

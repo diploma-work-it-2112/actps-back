@@ -17,6 +17,7 @@ psycopg2 = "^2.9.10"
 websockets = "^14.2"
 aiohttp = "^3.11.11"
 redis = "^5.2.1"
+scapy = "^2.6.1"
 
 
 [build-system]

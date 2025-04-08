@@ -47,11 +47,11 @@ class AbstractTraficParser(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def ipv6_parce(self, packet):
+    def ipv6_parse(self, packet):
         raise NotImplementedError
 
     @abstractmethod
-    def arp_parce(self, packet):
+    def arp_parse(self, packet):
         raise NotImplementedError
 
     @abstractmethod

@@ -9,13 +9,22 @@ class TraficStorageManager(AbstractTraficStorageManager):
     def __init__(self, file_path: str):
         self._file_path = file_path
 
+
+    def universal_default(self, o):
+        if isinstance(o, bytes):
+            try:
+                return o.decode('utf-8')
+            except UnicodeDecodeError:
+                return o.hex()
+        return str(o)
+
     def write(self, logs):
         today = datetime.date.today()
         month = today.month  
         day = today.day     
         year = today.year
 
-        self.ndjon_wirte(
+        self.ndjson_write(
             logs=logs,
             year=year,
             month=month,
@@ -23,17 +32,17 @@ class TraficStorageManager(AbstractTraficStorageManager):
         )
 
 
-    def ndjon_wirte(self, logs, year: int, month: int, day: int):
+    def ndjson_write(self, logs, year: int, month: int, day: int):
         path_to_file = str(year)+"_"+str(month)+"_"+str(day)
-        path = self._file_path + path_to_file 
+        path = self._file_path + path_to_file+"_packet_logs.ndjson" 
         with open(path, "a", encoding="utf-8") as f:
             for log in logs:
-                data = json.dumps(log, ensure_ascii=False)
+                data = json.dumps(log, default=self.universal_default, ensure_ascii=False)
                 f.write(data+"\n")
 
 
     def ndjson_read(self, year: int, month: int, day: int, start_hour: int, end_hour: int, depth: int):
-        path_to_file = str(year)+"_"+str(month)+"_"+str(day)
+        path_to_file = str(year)+"_"+str(month)+"_"+str(day)+"_packet_logs.ndjson"
         path = self._file_path + path_to_file 
 
 # Если ни start_hour, ни depth не заданы, выбрасываем ошибку
