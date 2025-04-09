@@ -11,6 +11,7 @@ from src.actps.gateway.urls import (
     get_pc_router,
     get_deamon_connection_router,
     get_logs_router,
+    get_trafic_router,
 )
 from src.actps.config import FRONT_URL
 from src.actps.trafic_monitor.json_parser import ScapyJSONTraficParse
@@ -43,6 +44,7 @@ app.include_router(get_router_router())
 app.include_router(get_pc_router())
 app.include_router(get_deamon_connection_router())
 app.include_router(get_logs_router())
+app.include_router(get_trafic_router())
 
 def start_uvicorn():
     uvicorn.run(app, host="0.0.0.0", port=8000)

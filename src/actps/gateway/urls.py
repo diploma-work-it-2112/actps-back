@@ -13,6 +13,8 @@ from src.actps.gateway.handler import (
 
     frontend_process_handler,
     frontend_system_load_handler,
+
+    monitor_trafic_handler,
 )
 from src.actps.gateway.handler.logs import (
     receive_package_log_from_pc_handler,
@@ -48,4 +50,10 @@ def get_logs_router() -> APIRouter:
     router = APIRouter(tags=["Logs"], prefix="/v1")
     router.post("/log/package", status_code=200)(receive_package_log_from_pc_handler)
     router.get("/log/package/{hostname}", status_code=200)(get_all_packages_logs_from_pc_by_hostname_handler)
+    return router
+
+
+def get_trafic_router() -> APIRouter:
+    router = APIRouter(tags=["Trafic"], prefix="/v1")
+    router.websocket("/ws/trafic")(monitor_trafic_handler)
     return router

@@ -16,6 +16,9 @@ from .personal_computer_handler import (
     get_all_working_hosts,
 )
 
+from .trafic_monitoring_handler import (
+    monitor_trafic_handler,
+)
 
 __all__ = [
     "connect_router_handler",
@@ -27,4 +30,5 @@ __all__ = [
     "get_all_working_hosts",
     "frontend_process_handler",
     "frontend_system_load_handler",
+    "monitor_trafic_handler",
 ]

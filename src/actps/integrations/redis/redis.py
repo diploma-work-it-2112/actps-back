@@ -45,7 +45,7 @@ class RedisCacheService(AbstractCacheService):
             pass
 
 
-    def xread(self, stream_key, min, max, count):
+    def xrange(self, stream_key, min, max, count):
         self._client.xrange(stream_key, min=min, max=max, count=count)
 
 
