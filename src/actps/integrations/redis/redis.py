@@ -46,7 +46,7 @@ class RedisCacheService(AbstractCacheService):
 
 
     def xrange(self, stream_key, min, max, count):
-        self._client.xrange(stream_key, min=min, max=max, count=count)
+        return self._client.xrange(stream_key, min=min, max=max, count=count)
 
 
     def xtrim(self, stream_key, maxlen):
