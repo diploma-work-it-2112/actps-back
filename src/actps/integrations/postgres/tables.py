@@ -62,3 +62,14 @@ proces_log = Table(
     Column("pred", String(512), nullable=False),
     Column("created_at", DateTime(timezone=True), nullable=True)
 )
+
+
+warning = Table(
+    "warning",
+    mapper_registry.metadata,
+    Column("id", BigInteger, primary_key=True, index=True, autoincrement=True),
+    Column("hostname", String(256), nullable=False),
+    Column("type", String(256), nullable=False),
+    Column("message", String(256), nullable=False),
+    Column("created_at", DateTime(timezone=True), nullable=True)
+)

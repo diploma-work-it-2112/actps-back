@@ -20,6 +20,10 @@ from .trafic_monitoring_handler import (
     monitor_trafic_handler,
 )
 
+from .warning_handler import (
+    save_warning_handler,
+)
+
 __all__ = [
     "connect_router_handler",
     "get_all_routers_handler",
@@ -31,4 +35,5 @@ __all__ = [
     "frontend_process_handler",
     "frontend_system_load_handler",
     "monitor_trafic_handler",
+    "save_warning_handler",
 ]

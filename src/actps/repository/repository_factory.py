@@ -8,6 +8,8 @@ from src.actps.domain.router.model import Router
 
 from src.actps.repository.logs.package_log_repository import PackageLogRepository
 from src.actps.domain.logs import PackageLog, ProcessLog
+from src.actps.repository.warning.respository import WarningRepository
+from src.actps.domain.warning.model import Warning
 
 
 class RepositoryFactory:
@@ -24,3 +26,5 @@ class RepositoryFactory:
             return PackageLogRepository(self.session_factory)
         elif obj_type == ProcessLog:
             return ProcessLogRepository(self.session_factory)
+        elif obj_type == Warning:
+            return WarningRepository(self.session_factory)

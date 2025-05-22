@@ -15,6 +15,8 @@ from src.actps.gateway.handler import (
     frontend_system_load_handler,
 
     monitor_trafic_handler,
+
+    save_warning_handler
 )
 from src.actps.gateway.handler.logs import (
     receive_package_log_from_pc_handler,
@@ -60,4 +62,10 @@ def get_logs_router() -> APIRouter:
 def get_trafic_router() -> APIRouter:
     router = APIRouter(tags=["Trafic"], prefix="/v1")
     router.websocket("/ws/trafic/")(monitor_trafic_handler)
+    return router
+
+
+def get_warning_router() -> APIRouter:
+    router = APIRouter(tags=["Warning"], prefix="/v1")
+    router.post("/warning", status_code=200)(save_warning_handler)
     return router
