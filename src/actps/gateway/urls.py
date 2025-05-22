@@ -18,7 +18,9 @@ from src.actps.gateway.handler import (
 )
 from src.actps.gateway.handler.logs import (
     receive_package_log_from_pc_handler,
-    get_all_packages_logs_from_pc_by_hostname_handler
+    get_all_packages_logs_from_pc_by_hostname_handler,
+
+    save_process_log_handler,
 )
 
 
@@ -50,6 +52,8 @@ def get_logs_router() -> APIRouter:
     router = APIRouter(tags=["Logs"], prefix="/v1")
     router.post("/log/package", status_code=200)(receive_package_log_from_pc_handler)
     router.get("/log/package/{hostname}", status_code=200)(get_all_packages_logs_from_pc_by_hostname_handler)
+
+    router.post("/log/process", status_code=200)(save_process_log_handler)
     return router
 
 
