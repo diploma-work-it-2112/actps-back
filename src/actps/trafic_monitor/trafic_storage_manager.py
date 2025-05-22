@@ -34,7 +34,7 @@ class TraficStorageManager(AbstractTraficStorageManager):
 
     def ndjson_write(self, logs, year: int, month: int, day: int):
         path_to_file = str(year)+"_"+str(month)+"_"+str(day)
-        path = self._file_path + path_to_file+"_packet_logs.ndjson" 
+        path = self._file_path + path_to_file+"_take_packet_logs.ndjson" 
         with open(path, "a", encoding="utf-8") as f:
             for log in logs:
                 data = json.dumps(log, default=self.universal_default, ensure_ascii=False)

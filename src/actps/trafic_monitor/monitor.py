@@ -1,9 +1,11 @@
 from scapy.all import sniff, Ether, IP, TCP, UDP, ICMP, Raw, ARP, IPv6, DNS, DNSQR
 import time
 import json
+import requests
 
 from src.actps.core.cache_service import AbstractCacheService
 from src.actps.core.trafic_monitor import AbstractTraficMonitoring, AbstractTraficParser, AbstractTraficStorageManager
+from src.actps.config import IP_BLOCK_LIST_FILE_PATH
 
 
 class TraficMonitor(AbstractTraficMonitoring):
@@ -15,9 +17,44 @@ class TraficMonitor(AbstractTraficMonitoring):
         self.cache_service = cache_service
         self.stream_key = stream_key
 
+        self.tcp_count = 0
+        self.arp_count = 0
+        self._time = time.time()
+
+
+    def block_address(self, addr):
+        requests.get("http://"+addr+":8080/close-connection") 
+
+    def monitor_freq(self, packet_json):
+        if packet_json is None:
+            return 
+        if any(k.startswith('tcp_') for k in packet_json):
+            self.tcp_count += 1 
+        elif any(k.startswith('arp_') for k in packet_json):
+            self.arp_count += 1
+
+
+        if int(time.time()) - int(self._time) >= 1:
+            print("if")
+            if self.tcp_count >= 200:
+                print("DDOS")
+                print(packet_json)
+                print(packet_json["ip_src"])
+                self.block_address(packet_json["ip_src"])
+                time.sleep(20)
+            if self.arp_count >= 200:
+                print("namp")
+                print(packet_json["arp_psrc"])
+                self.block_address(packet_json["arp_psrc"])
+            self._time = time.time()
+            self.tcp_count = 0
+            self.arp_count = 0
+
     def monitor(self, packet):
         log = self.log_parser.parce(packet)
         self.logs.append(log)
+
+        # self.monitor_freq(log)
 
         self.cache_service.xadd(self.stream_key, log)
         cache_len = self.cache_service.xlen(self.stream_key)

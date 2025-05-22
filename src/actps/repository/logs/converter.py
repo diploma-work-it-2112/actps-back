@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from src.actps.domain.logs import PackageLog
+from src.actps.domain.logs import PackageLog, ProcessLog
 
 
 def package_log_to_dict(model: PackageLog):
@@ -34,5 +34,23 @@ def dict_to_package_log(pl):
         message=pl.get("message"),
         id=pl.get("id"),
         created_at=pl.get("created_at")
+    )
+
+def process_log_to_dict(model: ProcessLog):
+    return {
+        "id": model.id,
+        "name": model.name,
+        "path": model.path,
+        "pred": model.pred,
+        "created_at": model.created_at
+    }
+
+def dict_to_process_log(pl):
+    return ProcessLog(
+        name=pl["name"],
+        path=pl["path"],
+        pred=pl["pred"],
+        created_at=pl.get("created_at"),
+        id=pl.get("id")
     )
 

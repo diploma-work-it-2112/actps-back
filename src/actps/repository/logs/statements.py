@@ -104,3 +104,53 @@ delete_package_log = text("""
     delete from package_log where id=:id
 """)
 
+
+
+insert_process_log = text("""
+    insert into proces_log(
+        "name",
+        "path",
+        "pred",
+        "created_at"
+    ) values (
+        :name,
+        :path,
+        :pred,
+        :created_at
+    ) returning id
+""")
+
+select_process_log = text("""
+    select 
+        id,
+        name,
+        path,
+        pred,
+        created_at
+    from proces_log
+""")
+
+select_process_log_by_id = text("""
+    select 
+        id,
+        name,
+        path,
+        pred,
+        created_at
+    from proces_log
+    where id = :id
+""")
+
+update_process_log = text("""
+    update proces_log
+    set 
+        name = :name,
+        path = :path,
+        pred = :pred,
+        created_at = :created_at
+    where id = :id
+""")
+
+delete_process_log = text("""
+    delete from proces_log where id = :id
+""")

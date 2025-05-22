@@ -53,3 +53,12 @@ package_log = Table(
     Column("created_at", DateTime(timezone=True), nullable=True)
 )
 
+proces_log = Table(
+    "proces_log",
+    mapper_registry.metadata,
+    Column("id", BigInteger, primary_key=True, index=True, autoincrement=True),
+    Column("name", String(512), nullable=False),
+    Column("path", String(512), nullable=False),
+    Column("pred", String(512), nullable=False),
+    Column("created_at", DateTime(timezone=True), nullable=True)
+)

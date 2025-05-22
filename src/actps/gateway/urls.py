@@ -55,5 +55,5 @@ def get_logs_router() -> APIRouter:
 
 def get_trafic_router() -> APIRouter:
     router = APIRouter(tags=["Trafic"], prefix="/v1")
-    router.websocket("/ws/trafic")(monitor_trafic_handler)
+    router.websocket("/ws/trafic/")(monitor_trafic_handler)
     return router
