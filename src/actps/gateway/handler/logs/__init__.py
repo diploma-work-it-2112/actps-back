@@ -5,6 +5,7 @@ from .package_log_handlers import (
 
 from .process_log_handler import (
     save_process_log_handler,
+    get_process_log_infor_handler,
 )
 
 
@@ -13,4 +14,5 @@ __all__ = [
     "get_all_packages_logs_from_pc_by_hostname_handler",
 
     "save_process_log_handler",
+    "get_process_log_infor_handler",
 ]

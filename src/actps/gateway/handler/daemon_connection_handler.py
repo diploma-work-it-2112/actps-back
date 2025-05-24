@@ -51,3 +51,11 @@ async def frontend_system_load_handler(ws: WebSocket, ip_address: str):
         connections["system_load"].pop(connection_id, None)
         task.cancel()
 
+
+async def get_folder_tree_handler(ip_address: str):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"http://{ip_address}:8080/folder-tree") as resp:
+            tree = await resp.json()
+    
+    return tree
+

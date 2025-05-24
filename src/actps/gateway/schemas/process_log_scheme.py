@@ -14,4 +14,5 @@ class ProcessLogResponse(BaseModel):
     name: str 
     path: str 
     pred: str
+    report: Dict
     created_at: datetime
