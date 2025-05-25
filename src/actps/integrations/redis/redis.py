@@ -20,6 +20,11 @@ class RedisCacheService(AbstractCacheService):
     def set(self, key: str, value: str, expiration: Optional[int] = None) -> None:
         self._client.set(key, value, ex=expiration)
 
+    def hset(self, key: str, value: dict, expiration: Optional[int] = None) -> None:
+        self._client.hset(key, mapping=value)
+        if expiration is not None:
+            self._client.expire(key, expiration)
+
     def get(self, key: str) -> Optional[str]:
         value = self._client.get(key)
         return value.decode('utf-8') if value else None

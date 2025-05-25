@@ -7,6 +7,10 @@ class AbstractCacheService(ABC):
     @abstractmethod
     def set(self, key, value, expiration: Optional[int] = None):
         raise NotImplementedError
+
+    @abstractmethod 
+    def hset(self, key, value, expiration: Optional[int] = None):
+        raise NotImplementedError
     
     @abstractmethod
     def get(self, key: str) -> Optional[str]:

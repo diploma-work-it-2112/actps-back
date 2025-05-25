@@ -18,6 +18,7 @@ class PCResponse(BaseModel):
 
 class PCHeartbeatRequest(BaseModel):
     hostname: str
+    open_ports: Dict
 
 
 class AllWorkingHostsResponse(BaseModel):

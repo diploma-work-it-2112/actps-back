@@ -72,3 +72,10 @@ class PCService:
 
             await uow.commit()
 
+        cache_service.set(data.hostname, pc_ip, 40)
+
+        data_to_save_cache = data.open_ports
+        data_to_save_cache.update({"hostname": data.hostname})
+
+        cache_service.hset(pc_ip, data_to_save_cache)
+
