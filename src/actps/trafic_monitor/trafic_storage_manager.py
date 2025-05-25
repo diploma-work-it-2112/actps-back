@@ -29,6 +29,7 @@ class TraficStorageManager(AbstractTraficStorageManager):
 
         self.protocol_count(logs)
         self.ip_count(logs)
+        self.mac_count(logs)
 
         self.ndjson_write(
             log=self.log_to_write,
@@ -189,3 +190,32 @@ class TraficStorageManager(AbstractTraficStorageManager):
         }
 
         self.log_to_write.update(data_to_save)
+
+
+    def mac_count(self, logs):
+        macs_src = {}
+        macs_dst = {}
+
+        for pkt in logs:
+            if not isinstance(pkt, dict):
+                continue
+
+            if "mac_src" in pkt:
+                if pkt["mac_src"] not in macs_src:
+                    macs_src[pkt["mac_src"]] = 1
+                else:
+                    macs_src[pkt["mac_src"]] += 1
+
+            if "mac_dst" in pkt:
+                if pkt["mac_dst"] not in macs_dst:
+                    macs_dst[pkt["mac_dst"]] = 1
+                else:
+                    macs_dst[pkt["mac_dst"]] += 1
+
+        data_to_save = {
+            "macs_src": macs_src,
+            "macs_dst": macs_dst
+        }
+
+        self.log_to_write.update(data_to_save)
+
