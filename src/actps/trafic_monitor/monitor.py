@@ -1,4 +1,5 @@
 from scapy.all import sniff, Ether, IP, TCP, UDP, ICMP, Raw, ARP, IPv6, DNS, DNSQR
+from datetime import datetime
 import time
 import json
 import requests
@@ -20,6 +21,7 @@ class TraficMonitor(AbstractTraficMonitoring):
         self.tcp_count = 0
         self.arp_count = 0
         self._time = time.time()
+        self._log_time_s = 0
 
 
     def block_address(self, addr):
@@ -53,7 +55,15 @@ class TraficMonitor(AbstractTraficMonitoring):
     def monitor(self, packet):
         log = self.log_parser.parce(packet)
         self.logs.append(log)
+        log_time = log["time"]
+        log_time_dt = datetime.fromtimestamp(log_time)
+        log_sec = log_time_dt.second
+        
+        if log_sec % 5 == 0 and self._log_time_s != log_sec:
+            self.write_logs()
+            self._log_time_s = log_sec
 
+        
         # self.monitor_freq(log)
 
         self.cache_service.xadd(self.stream_key, log)
@@ -62,9 +72,9 @@ class TraficMonitor(AbstractTraficMonitoring):
         if cache_len >= 150:
             self.cache_service.xtrim(self.stream_key, 100)
 
-        if len(self.logs) == 100:
-            print("write")
-            self.write_logs()
+        # if len(self.logs) == 100:
+        #     print("write")
+        #     self.write_logs()
 
 
     def run(self):

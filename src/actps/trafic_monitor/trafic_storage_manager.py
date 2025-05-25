@@ -8,6 +8,7 @@ class TraficStorageManager(AbstractTraficStorageManager):
 
     def __init__(self, file_path: str):
         self._file_path = file_path
+        self.log_to_write = {}
 
 
     def universal_default(self, o):
@@ -83,3 +84,53 @@ class TraficStorageManager(AbstractTraficStorageManager):
                     break
 
         return logs
+
+
+    def protocol_count(self, logs):
+        num_protocols = {
+            "Ether": 0,
+            "IPv4": 0,
+            "TCP": 0,
+            "UDP": 0,
+            "ICMP": 0,
+            "IPv6": 0,
+            "ARP": 0,
+            "DNS": 0,
+            "HTTP": 0,
+            "HTTPS": 0,
+            "Unknown": 0
+        }
+
+        for pkt in logs:
+            proto = 'Unknown'
+
+            if not isinstance(pkt, dict):
+                print(None)
+                continue
+
+            if any(k.startswith('dns_') for k in pkt):
+                proto = 'DNS'
+            elif 'http_payload' in pkt or 'http_headers' in pkt:
+                proto = 'HTTP'
+            elif 'https_payload_hex' in pkt:
+                proto = 'HTTPS'
+            elif any(k.startswith('icmp_') for k in pkt):
+                proto = 'ICMP'
+            elif any(k.startswith('tcp_') for k in pkt):
+                proto = 'TCP'
+            elif any(k.startswith('udp_') for k in pkt):
+                proto = 'UDP'
+            elif any(k.startswith('ipv6_') for k in pkt):
+                proto = 'IPv6'
+            elif any(k.startswith('ip_') for k in pkt):
+                proto = 'IPv4'
+            elif any(k.startswith('arp_') for k in pkt):
+                proto = 'ARP'
+            elif any(k.startswith('mac_') for k in pkt):
+                proto = 'Ether'
+
+            num_protocols[proto] += 1
+
+        self.log_to_write.update(num_protocols)
+
+
