@@ -1,5 +1,6 @@
 import json 
 import datetime
+import os
 
 from src.actps.core.trafic_monitor import AbstractTraficStorageManager
 
@@ -19,24 +20,37 @@ class TraficStorageManager(AbstractTraficStorageManager):
                 return o.hex()
         return str(o)
 
-    def write(self, logs):
+    def write(self, logs, hour, minute):
         today = datetime.date.today()
         month = today.month  
         day = today.day     
         year = today.year
+        self.log_to_write = {}
+
+        self.protocol_count(logs)
+        self.ip_count(logs)
 
         self.ndjson_write(
-            logs=logs,
+            log=self.log_to_write,
             year=year,
             month=month,
-            day=day
+            day=day,
+            hour=hour,
+            minute=minute,
         )
 
 
-    def ndjson_write(self, logs, year: int, month: int, day: int):
-        path_to_file = str(year)+"_"+str(month)+"_"+str(day)
-        path = self._file_path + path_to_file+"_take_packet_logs.ndjson" 
-        with open(path, "a", encoding="utf-8") as f:
+    def ndjson_write(self, log, year: int, month: int, day: int, hour: int, minute: int):
+        path_to_dir = str(year)+"_"+str(month)+"_"+str(day)
+
+        if not os.path.exists(path_to_dir):
+            os.makedirs(path_to_dir) 
+        
+        if minute <= 30:
+            path_file = f"{hour}_30.ndjson" 
+        else:
+            path_file = f"{hour}_60.ndjson"
+        with open(self._file_path+path_to_dir+path_file, "a", encoding="utf-8") as f:
             for log in logs:
                 data = json.dumps(log, default=self.universal_default, ensure_ascii=False)
                 f.write(data+"\n")
@@ -131,6 +145,47 @@ class TraficStorageManager(AbstractTraficStorageManager):
 
             num_protocols[proto] += 1
 
-        self.log_to_write.update(num_protocols)
+        data_to_save = {
+            "num_proto": num_protocols
+        }
+
+        self.log_to_write.update(data_to_save)
 
 
+    def ip_count(self, logs):
+        ips_src = {}
+        ips_dst = {}
+
+        for pkt in logs:
+            
+            if not instance(pkt, dict):
+                continue 
+
+            if "ip_src" in pkt:
+                if pkt["ip_src"] not in ips_src:
+                    ips_src[pkt["ip_src"]] = 1
+                else:
+                    ips_src[pkt["ip_src"]] += 1
+            elif "ipv6_src" in pkt:
+                if pkt["ipv6_src"] not in ips_src:
+                    ips_src[pkt["ipv6_src"]] = 1
+                else:
+                    ips_src[pkt["ipv6_src"]] += 1 
+            
+            if "ip_dst" in pkt:
+                if pkt["ip_dst"] not in ips_dst:
+                    ips_dst[pkt["ip_dst"]] = 1 
+                else:
+                    ips_dst[pkt["ip_dst"]] += 1
+            elif "ipv6_dst" in pkt:
+                if pkt["ipv6_dst"] not in ips_dst:
+                    ips_dst[pkt["ipv6_dst"]] = 1
+                else:
+                    ips_dst[pkt["ipv6_dst"]] += 1
+        
+        data_to_save = {
+            "ips_src": ips_src,
+            "ips_dst": ips_dst
+        }
+
+        self.log_to_write.update(data_to_save)

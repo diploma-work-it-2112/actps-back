@@ -11,12 +11,13 @@ from src.actps.config import IP_BLOCK_LIST_FILE_PATH
 
 class TraficMonitor(AbstractTraficMonitoring):
 
-    def __init__(self, log_writer: AbstractTraficStorageManager, log_parser: AbstractTraficParser, cache_service: AbstractCacheService, stream_key):
+    def __init__(self, log_writer: AbstractTraficStorageManager, log_parser: AbstractTraficParser, cache_service: AbstractCacheService, stream_key, stream_key_stat):
         self.logs = []
         self.log_writer = log_writer
         self.log_parser = log_parser
         self.cache_service = cache_service
         self.stream_key = stream_key
+        self.stream_key_stat = stream_key_stat
 
         self.tcp_count = 0
         self.arp_count = 0
@@ -58,9 +59,11 @@ class TraficMonitor(AbstractTraficMonitoring):
         log_time = log["time"]
         log_time_dt = datetime.fromtimestamp(log_time)
         log_sec = log_time_dt.second
+        log_hour = log_time_dt.hour
+        log_minutes = log_time_dt.minute
         
         if log_sec % 5 == 0 and self._log_time_s != log_sec:
-            self.write_logs()
+            self.write_logs(log_hour, log_minutes)
             self._log_time_s = log_sec
 
         
@@ -92,6 +95,6 @@ class TraficMonitor(AbstractTraficMonitoring):
         pass
 
     
-    def write_logs(self):
-        self.log_writer.write(self.logs)
+    def write_logs(self, hour, minute):
+        self.log_writer.write(self.logs, hour, minute)
         self.logs = []
