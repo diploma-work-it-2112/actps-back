@@ -32,6 +32,7 @@ class TraficStorageManager(AbstractTraficStorageManager):
         self.protocol_count(logs)
         self.ip_count(logs)
         self.mac_count(logs)
+        self.process_name_by_port_count(logs, cache_service)
 
         self.ndjson_write(
             log=self.log_to_write,
@@ -103,28 +104,31 @@ class TraficStorageManager(AbstractTraficStorageManager):
         return logs
 
 
-    def protocol_count(self, logs):
+    def count_pkts(self, logs, hour, minute, cache_service: AbstractCacheService):
+        import datetime
+
+        today = datetime.date.today()
+        month = today.month  
+        day = today.day     
+        year = today.year
+
+        self.log_to_write = {}
+
         num_protocols = {
-            "Ether": 0,
-            "IPv4": 0,
-            "TCP": 0,
-            "UDP": 0,
-            "ICMP": 0,
-            "IPv6": 0,
-            "ARP": 0,
-            "DNS": 0,
-            "HTTP": 0,
-            "HTTPS": 0,
+            "Ether": 0, "IPv4": 0, "TCP": 0, "UDP": 0, "ICMP": 0,
+            "IPv6": 0, "ARP": 0, "DNS": 0, "HTTP": 0, "HTTPS": 0,
             "Unknown": 0
         }
+        ips_src, ips_dst = {}, {}
+        macs_src, macs_dst = {}, {}
+        process_names = {}
 
         for pkt in logs:
-            proto = 'Unknown'
-
             if not isinstance(pkt, dict):
-                print(None)
                 continue
 
+            # --- Протокол ---
+            proto = 'Unknown'
             if any(k.startswith('dns_') for k in pkt):
                 proto = 'DNS'
             elif 'http_payload' in pkt or 'http_headers' in pkt:
@@ -145,106 +149,55 @@ class TraficStorageManager(AbstractTraficStorageManager):
                 proto = 'ARP'
             elif any(k.startswith('mac_') for k in pkt):
                 proto = 'Ether'
-
             num_protocols[proto] += 1
 
-        data_to_save = {
-            "num_proto": num_protocols
-        }
+            # --- IP ---
+            ip_src = pkt.get("ip_src") or pkt.get("ipv6_src")
+            ip_dst = pkt.get("ip_dst") or pkt.get("ipv6_dst")
 
-        self.log_to_write.update(data_to_save)
+            if ip_src:
+                ips_src[ip_src] = ips_src.get(ip_src, 0) + 1
+            if ip_dst:
+                ips_dst[ip_dst] = ips_dst.get(ip_dst, 0) + 1
 
+            # --- MAC ---
+            mac_src = pkt.get("mac_src")
+            mac_dst = pkt.get("mac_dst")
+            if mac_src:
+                macs_src[mac_src] = macs_src.get(mac_src, 0) + 1
+            if mac_dst:
+                macs_dst[mac_dst] = macs_dst.get(mac_dst, 0) + 1
 
-    def ip_count(self, logs):
-        ips_src = {}
-        ips_dst = {}
+            # --- Process by port ---
+            for port_field, ip_field in [("tcp_sport", "ip_src"), ("udp_sport", "ip_src"),
+                                         ("tcp_dport", "ip_dst"), ("udp_dport", "ip_dst")]:
+                port = pkt.get(port_field)
+                ip = pkt.get(ip_field)
+                if port and ip:
+                    port_processes = cache_service.hgetall(ip)
+                    process_name = port_processes.get(str(port))
+                    if process_name:
+                        process_names[process_name] = process_names.get(process_name, 0) + 1
 
-        for pkt in logs:
-            
-            if not instance(pkt, dict):
-                continue 
-
-            if "ip_src" in pkt:
-                if pkt["ip_src"] not in ips_src:
-                    ips_src[pkt["ip_src"]] = 1
-                else:
-                    ips_src[pkt["ip_src"]] += 1
-            elif "ipv6_src" in pkt:
-                if pkt["ipv6_src"] not in ips_src:
-                    ips_src[pkt["ipv6_src"]] = 1
-                else:
-                    ips_src[pkt["ipv6_src"]] += 1 
-            
-            if "ip_dst" in pkt:
-                if pkt["ip_dst"] not in ips_dst:
-                    ips_dst[pkt["ip_dst"]] = 1 
-                else:
-                    ips_dst[pkt["ip_dst"]] += 1
-            elif "ipv6_dst" in pkt:
-                if pkt["ipv6_dst"] not in ips_dst:
-                    ips_dst[pkt["ipv6_dst"]] = 1
-                else:
-                    ips_dst[pkt["ipv6_dst"]] += 1
-        
-        data_to_save = {
+        # Объединяем всё в log_to_write
+        self.log_to_write.update({
+            "num_proto": num_protocols,
             "ips_src": ips_src,
-            "ips_dst": ips_dst
-        }
-
-        self.log_to_write.update(data_to_save)
-
-
-    def mac_count(self, logs):
-        macs_src = {}
-        macs_dst = {}
-
-        for pkt in logs:
-            if not isinstance(pkt, dict):
-                continue
-
-            if "mac_src" in pkt:
-                if pkt["mac_src"] not in macs_src:
-                    macs_src[pkt["mac_src"]] = 1
-                else:
-                    macs_src[pkt["mac_src"]] += 1
-
-            if "mac_dst" in pkt:
-                if pkt["mac_dst"] not in macs_dst:
-                    macs_dst[pkt["mac_dst"]] = 1
-                else:
-                    macs_dst[pkt["mac_dst"]] += 1
-
-        data_to_save = {
+            "ips_dst": ips_dst,
             "macs_src": macs_src,
             "macs_dst": macs_dst
-        }
+        })
+        self.log_to_write.update(process_names)  
 
-        self.log_to_write.update(data_to_save)
-
-    def process_name_by_port_count(self, logs, cache_service: AbstractCacheService):
-
-        process_names = {}
-
-        for pkt in logs:
-            if "tcp_sport" in pkt or "udp_sport" in pkt:
-                sport = pkt.get("tcp_sport") or pkt.get("udp_sport")
-                ip_src = pkt.get("ip_src")
-                if ip_src:
-                    port_processes = cache_service.hgetall(ip_src)
-                    process_name = port_processes.get(str(sport))
-                    if process_name:
-                        process_names[process_name] = process_names.get(process_name, 0) + 1
-
-            if "tcp_dport" in pkt or "udp_dport" in pkt:
-                dport = pkt.get("tcp_dport") or pkt.get("udp_dport")
-                ip_dst = pkt.get("ip_dst")
-                if ip_dst:
-                    port_processes = cache_service.hgetall(ip_dst)
-                    process_name = port_processes.get(str(dport))
-                    if process_name:
-                        process_names[process_name] = process_names.get(process_name, 0) + 1
-
-        return process_names
+        # Сохраняем
+        self.ndjson_write(
+            log=self.log_to_write,
+            year=year,
+            month=month,
+            day=day,
+            hour=hour,
+            minute=minute,
+        )
 
 
 
