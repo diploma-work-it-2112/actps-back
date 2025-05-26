@@ -61,7 +61,8 @@ trafic_monitor = TraficMonitor(
     log_writer=trafic_storage_manager,
     log_parser=parser,
     cache_service=redis_trafic_monitor_session,
-    stream_key="trafic_logs_key"
+    stream_key="trafic_logs_key",
+    stream_key_stat="trafic_log_stat"
 )
 
 if __name__ == "__main__":

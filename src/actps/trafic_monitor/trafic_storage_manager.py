@@ -22,42 +22,21 @@ class TraficStorageManager(AbstractTraficStorageManager):
                 return o.hex()
         return str(o)
 
-    def write(self, logs, hour, minute, cache_service: AbstractCacheService):
-        today = datetime.date.today()
-        month = today.month  
-        day = today.day     
-        year = today.year
-        self.log_to_write = {}
-
-        self.protocol_count(logs)
-        self.ip_count(logs)
-        self.mac_count(logs)
-        self.process_name_by_port_count(logs, cache_service)
-
-        self.ndjson_write(
-            log=self.log_to_write,
-            year=year,
-            month=month,
-            day=day,
-            hour=hour,
-            minute=minute,
-        )
-
 
     def ndjson_write(self, log, year: int, month: int, day: int, hour: int, minute: int):
-        path_to_dir = str(year)+"_"+str(month)+"_"+str(day)
+        path_to_dir = str(year)+"_"+str(month)+"_"+str(day)+"/"
 
-        if not os.path.exists(path_to_dir):
-            os.makedirs(path_to_dir) 
+        if not os.path.exists(self._file_path+path_to_dir):
+            print("make")
+            os.makedirs(self._file_path+path_to_dir) 
         
         if minute <= 30:
             path_file = f"{hour}_30.ndjson" 
         else:
             path_file = f"{hour}_60.ndjson"
         with open(self._file_path+path_to_dir+path_file, "a", encoding="utf-8") as f:
-            for log in logs:
-                data = json.dumps(log, default=self.universal_default, ensure_ascii=False)
-                f.write(data+"\n")
+            data = json.dumps(log, default=self.universal_default, ensure_ascii=False)
+            f.write(data+"\n")
 
 
     def ndjson_read(self, year: int, month: int, day: int, start_hour: int, end_hour: int, depth: int):
@@ -104,9 +83,7 @@ class TraficStorageManager(AbstractTraficStorageManager):
         return logs
 
 
-    def count_pkts(self, logs, hour, minute, cache_service: AbstractCacheService):
-        import datetime
-
+    def write(self, logs, hour, minute, cache_service: AbstractCacheService):
         today = datetime.date.today()
         month = today.month  
         day = today.day     
@@ -179,7 +156,6 @@ class TraficStorageManager(AbstractTraficStorageManager):
                     if process_name:
                         process_names[process_name] = process_names.get(process_name, 0) + 1
 
-        # Объединяем всё в log_to_write
         self.log_to_write.update({
             "num_proto": num_protocols,
             "ips_src": ips_src,
@@ -188,8 +164,7 @@ class TraficStorageManager(AbstractTraficStorageManager):
             "macs_dst": macs_dst
         })
         self.log_to_write.update(process_names)  
-
-        # Сохраняем
+        self.log_to_write.update({"time": logs[0]["time"]})
         self.ndjson_write(
             log=self.log_to_write,
             year=year,

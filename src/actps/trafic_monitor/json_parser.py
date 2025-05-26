@@ -9,27 +9,35 @@ class ScapyJSONTraficParse(AbstractTraficParser):
     def parce(self, packet):
         try:
             log_data = {}
+            known = False
 
             if packet.haslayer(Ether):
                 log_data.update(self.ether_parse(packet))
+                known = True
 
             if packet.haslayer(IP):
                 log_data.update(self.ip_parse(packet))
+                known = True
 
             if packet.haslayer(TCP):
                 log_data.update(self.tcp_parse(packet))
+                known = True
 
             elif packet.haslayer(UDP):
                 log_data.update(self.udp_parse(packet))
+                known = True
 
             elif packet.haslayer(ICMP):
                 log_data.update(self.icmp_parse(packet))
+                known = True
 
             if packet.haslayer(IPv6):
                 log_data.update(self.ipv6_parse(packet))
+                known = True
 
             if packet.haslayer(ARP):
                 log_data.update(self.arp_parse(packet))
+                known = True
 
             if packet.haslayer(TCP) and packet.haslayer(Raw):
                 tcp_layer = packet[TCP]
@@ -37,9 +45,15 @@ class ScapyJSONTraficParse(AbstractTraficParser):
                     log_data.update(self.http_parse(packet))
                 elif tcp_layer.sport == 443 or tcp_layer.dport == 443:
                     log_data.update(self.https_parse(packet))
+                known = True
 
             if packet.haslayer(DNS):
                 log_data.update(self.dns_parse(packet))
+                known = True
+
+            if not known:
+                print(packet)
+                log_data["type"] = "unknown"
 
             log_data["time"] = time.time()
             return log_data
@@ -184,7 +198,6 @@ class ScapyJSONTraficParse(AbstractTraficParser):
                     'type': dns_rr.type,
                     'rclass': dns_rr.rclass,
                     'ttl': dns_rr.ttl,
-                    'rdata': dns_rr.rdata
                 }
                 answers.append(answer)
             else:
@@ -195,7 +208,6 @@ class ScapyJSONTraficParse(AbstractTraficParser):
                         'type': dns_rr.type,
                         'rclass': dns_rr.rclass,
                         'ttl': dns_rr.ttl,
-                        'rdata': dns_rr.rdata
                     }
                     answers.append(answer)
             res['dns_answers'] = answers

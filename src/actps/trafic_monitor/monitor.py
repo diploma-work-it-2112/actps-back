@@ -54,6 +54,10 @@ class TraficMonitor(AbstractTraficMonitoring):
             self.arp_count = 0
 
     def monitor(self, packet):
+
+        if packet is None:
+            print("None")
+            return
         log = self.log_parser.parce(packet)
         self.logs.append(log)
         log_time = log["time"]
@@ -61,8 +65,11 @@ class TraficMonitor(AbstractTraficMonitoring):
         log_sec = log_time_dt.second
         log_hour = log_time_dt.hour
         log_minutes = log_time_dt.minute
+
+        print(log_minutes, log_sec, self._log_time_s)
         
         if log_sec % 5 == 0 and self._log_time_s != log_sec:
+            # print(log_minutes, log_sec)
             self.write_logs(log_hour, log_minutes)
             self._log_time_s = log_sec
 
@@ -82,7 +89,6 @@ class TraficMonitor(AbstractTraficMonitoring):
 
     def run(self):
         try:
-            print("run")
             sniff(prn=self.monitor, store=False)
         except Exception as e:
             print(1)
