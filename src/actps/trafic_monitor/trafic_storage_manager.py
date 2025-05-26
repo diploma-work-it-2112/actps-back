@@ -1,7 +1,9 @@
+from abc import abstractmethod
 import json 
 import datetime
 import os
 
+from src.actps.core.cache_service import AbstractCacheService
 from src.actps.core.trafic_monitor import AbstractTraficStorageManager
 
 
@@ -20,7 +22,7 @@ class TraficStorageManager(AbstractTraficStorageManager):
                 return o.hex()
         return str(o)
 
-    def write(self, logs, hour, minute):
+    def write(self, logs, hour, minute, cache_service: AbstractCacheService):
         today = datetime.date.today()
         month = today.month  
         day = today.day     
@@ -218,4 +220,32 @@ class TraficStorageManager(AbstractTraficStorageManager):
         }
 
         self.log_to_write.update(data_to_save)
+
+    def process_name_by_port_count(self, logs, cache_service: AbstractCacheService):
+
+        process_names = {}
+
+        for pkt in logs:
+            if "tcp_sport" in pkt or "udp_sport" in pkt:
+                sport = pkt.get("tcp_sport") or pkt.get("udp_sport")
+                ip_src = pkt.get("ip_src")
+                if ip_src:
+                    port_processes = cache_service.hgetall(ip_src)
+                    process_name = port_processes.get(str(sport))
+                    if process_name:
+                        process_names[process_name] = process_names.get(process_name, 0) + 1
+
+            if "tcp_dport" in pkt or "udp_dport" in pkt:
+                dport = pkt.get("tcp_dport") or pkt.get("udp_dport")
+                ip_dst = pkt.get("ip_dst")
+                if ip_dst:
+                    port_processes = cache_service.hgetall(ip_dst)
+                    process_name = port_processes.get(str(dport))
+                    if process_name:
+                        process_names[process_name] = process_names.get(process_name, 0) + 1
+
+        return process_names
+
+
+
 

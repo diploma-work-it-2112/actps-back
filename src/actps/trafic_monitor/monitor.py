@@ -96,5 +96,5 @@ class TraficMonitor(AbstractTraficMonitoring):
 
     
     def write_logs(self, hour, minute):
-        self.log_writer.write(self.logs, hour, minute)
+        self.log_writer.write(self.logs, hour, minute, self.cache_service)
         self.logs = []

@@ -29,6 +29,11 @@ class RedisCacheService(AbstractCacheService):
         value = self._client.get(key)
         return value.decode('utf-8') if value else None
 
+    def hgetall(self, key: str) -> Optional[dict]:
+        data = self._client.hgetall(key)
+        decoder = {k.decode(): v.decode() for k, v in data.items()}
+        return decoder
+
     def exists(self, key: str) -> bool:
         return self._client.exists(key) > 0
 

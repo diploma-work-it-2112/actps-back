@@ -17,6 +17,10 @@ class AbstractCacheService(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def hgetall(self, key: str) -> Optional[dict]:
+        raise NotImplementedError
+
+    @abstractmethod
     def exists(self, key: str) -> bool:
         return NotImplementedError
 
