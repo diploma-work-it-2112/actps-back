@@ -1,15 +1,22 @@
 import json
 import time
 import asyncio
-
-from fastapi import WebSocket, WebSocketDisconnect
+from typing import Optional
+from datetime import datetime
+from fastapi import Query, WebSocket, WebSocketDisconnect
 
 from src.actps.integrations.redis.redis import RedisCacheService
+from src.actps.trafic_monitor.trafic_storage_manager import TraficStorageManager
+from src.actps.gateway.handler.personal_computer_handler import redis_service as redis_addresse_info
 
 
 redis_trafic_monitor_session = RedisCacheService(db=2)
 
 
+trafic_stor_manag = TraficStorageManager(
+    file_path="src/actps/trafic_monitor/logs/",
+    cache_session=redis_addresse_info
+)
 
 def convert_bytes_to_str(data):
     res = {}
@@ -87,3 +94,19 @@ async def monitor_trafic_handler(ws: WebSocket, ip: str, protocol: str):
         print("Close")
     except Exception as e:
         print("Ошибка в monitor_trafic_handler:", e)
+
+group_by_enum_list = ['sec', 'min', '10min', '30min', 'hour', 'day', 'week', 'month', 'year']
+def get_trafic_graph_handler(
+    from_: datetime,
+    to: datetime = None,
+    group_by: str = Query("sec", enum=group_by_enum_list)
+):
+    logs = trafic_stor_manag.ndjson_read(
+        from_=from_,
+        to=to,
+        group_by=group_by
+    ) 
+
+    print("len trafic", len(logs))
+
+    return logs

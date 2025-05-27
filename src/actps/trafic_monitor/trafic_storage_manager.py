@@ -1,6 +1,6 @@
 from abc import abstractmethod
 import json 
-from datetime import datetime
+import datetime
 import os
 from typing import Optional
 
@@ -41,9 +41,9 @@ class TraficStorageManager(AbstractTraficStorageManager):
             f.write(data+"\n")
 
 
-    def ndjson_read(self, from_: datetime, to: Optional[datetime], group_by: str):
+    def ndjson_read(self, from_: datetime.datetime, group_by: str, to: datetime.datetime = None):
         res = []
-        with open(self._file_path+"2025_5_27/"+"2_60.ndjson") as f:
+        with open(self._file_path+"2025_5_27/"+"2_30.ndjson") as f:
             for line in f:
                 res.append(json.loads(line))
         return res

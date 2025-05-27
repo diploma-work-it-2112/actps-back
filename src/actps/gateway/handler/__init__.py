@@ -19,6 +19,7 @@ from .personal_computer_handler import (
 
 from .trafic_monitoring_handler import (
     monitor_trafic_handler,
+    get_trafic_graph_handler,
 )
 
 from .warning_handler import (
@@ -42,4 +43,5 @@ __all__ = [
     "get_all_warning",
     "get_latests_warning",
     "get_folder_tree_handler",
+    "get_trafic_graph_handler",
 ]

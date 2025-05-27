@@ -16,6 +16,7 @@ from src.actps.gateway.handler import (
     get_folder_tree_handler,
 
     monitor_trafic_handler,
+    get_trafic_graph_handler,
 
     save_warning_handler,
     get_all_warning,
@@ -68,6 +69,7 @@ def get_logs_router() -> APIRouter:
 def get_trafic_router() -> APIRouter:
     router = APIRouter(tags=["Trafic"], prefix="/v1")
     router.websocket("/ws/trafic/")(monitor_trafic_handler)
+    router.get("/trafic")(get_trafic_graph_handler)
     return router
 
 
