@@ -19,6 +19,7 @@ from src.actps.trafic_monitor.json_parser import ScapyJSONTraficParse
 from src.actps.trafic_monitor.monitor import TraficMonitor
 from src.actps.trafic_monitor.trafic_storage_manager import TraficStorageManager
 from src.actps.gateway.handler.trafic_monitoring_handler import redis_trafic_monitor_session
+from src.actps.gateway.handler.personal_computer_handler import redis_service as redis_addresse_info
 
 
 app = FastAPI(
@@ -53,7 +54,10 @@ def start_uvicorn():
 
 trafic_logs_paht = "src/actps/trafic_monitor/logs/"
 
-trafic_storage_manager = TraficStorageManager(trafic_logs_paht)
+trafic_storage_manager = TraficStorageManager(
+    file_path=trafic_logs_paht,
+    cache_session=redis_addresse_info
+)
 
 parser = ScapyJSONTraficParse()
 

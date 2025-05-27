@@ -66,10 +66,8 @@ class TraficMonitor(AbstractTraficMonitoring):
         log_hour = log_time_dt.hour
         log_minutes = log_time_dt.minute
 
-        print(log_minutes, log_sec, self._log_time_s)
-        
         if log_sec % 5 == 0 and self._log_time_s != log_sec:
-            # print(log_minutes, log_sec)
+            print(log_minutes, log_sec)
             self.write_logs(log_hour, log_minutes)
             self._log_time_s = log_sec
 
@@ -102,5 +100,5 @@ class TraficMonitor(AbstractTraficMonitoring):
 
     
     def write_logs(self, hour, minute):
-        self.log_writer.write(self.logs, hour, minute, self.cache_service)
+        self.log_writer.write(self.logs, hour, minute)
         self.logs = []

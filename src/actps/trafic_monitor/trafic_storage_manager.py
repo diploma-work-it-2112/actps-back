@@ -9,9 +9,10 @@ from src.actps.core.trafic_monitor import AbstractTraficStorageManager
 
 class TraficStorageManager(AbstractTraficStorageManager):
 
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str, cache_session: AbstractCacheService):
         self._file_path = file_path
         self.log_to_write = {}
+        self._cache_service = cache_session
 
 
     def universal_default(self, o):
@@ -39,7 +40,7 @@ class TraficStorageManager(AbstractTraficStorageManager):
             f.write(data+"\n")
 
 
-    def ndjson_read(self, year: int, month: int, day: int, start_hour: int, end_hour: int, depth: int):
+    def ndjson_read(self, from: datetime, to: Optional[datetime], group_by: str):
         path_to_file = str(year)+"_"+str(month)+"_"+str(day)+"_packet_logs.ndjson"
         path = self._file_path + path_to_file 
 
@@ -83,7 +84,7 @@ class TraficStorageManager(AbstractTraficStorageManager):
         return logs
 
 
-    def write(self, logs, hour, minute, cache_service: AbstractCacheService):
+    def write(self, logs, hour, minute):
         today = datetime.date.today()
         month = today.month  
         day = today.day     
@@ -151,7 +152,7 @@ class TraficStorageManager(AbstractTraficStorageManager):
                 port = pkt.get(port_field)
                 ip = pkt.get(ip_field)
                 if port and ip:
-                    port_processes = cache_service.hgetall(ip)
+                    port_processes = self._cache_service.hgetall(ip)
                     process_name = port_processes.get(str(port))
                     if process_name:
                         process_names[process_name] = process_names.get(process_name, 0) + 1

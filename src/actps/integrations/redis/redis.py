@@ -15,6 +15,7 @@ class RedisCacheService(AbstractCacheService):
             db: int = 1, 
             password: Optional[str] = REDIS_PASSWORD
     ):
+        self._db = db
         self._client = redis.Redis(host=host, port=port, db=db, password=password)
 
     def set(self, key: str, value: str, expiration: Optional[int] = None) -> None:

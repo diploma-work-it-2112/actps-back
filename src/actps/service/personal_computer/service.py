@@ -67,9 +67,6 @@ class PCService:
                 pc.update_ip(pc_ip)
                 await uow.update(pc)
 
-            cache_service.set(data.hostname, pc_ip, 40)
-            cache_service.set(pc_ip, data.hostname, 40)
-
             await uow.commit()
 
         cache_service.set(data.hostname, pc_ip, 40)
