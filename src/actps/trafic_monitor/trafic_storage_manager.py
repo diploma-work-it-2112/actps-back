@@ -1,7 +1,8 @@
 from abc import abstractmethod
 import json 
-import datetime
+from datetime import datetime
 import os
+from typing import Optional
 
 from src.actps.core.cache_service import AbstractCacheService
 from src.actps.core.trafic_monitor import AbstractTraficStorageManager
@@ -40,49 +41,29 @@ class TraficStorageManager(AbstractTraficStorageManager):
             f.write(data+"\n")
 
 
-    def ndjson_read(self, from: datetime, to: Optional[datetime], group_by: str):
-        path_to_file = str(year)+"_"+str(month)+"_"+str(day)+"_packet_logs.ndjson"
-        path = self._file_path + path_to_file 
-
-# Если ни start_hour, ни depth не заданы, выбрасываем ошибку
-        if start_hour is None and depth is None:
-            raise ValueError("incorrect initial data")
-
-        # Вычисляем временные границы (если заданы)
-        if start_hour is not None:
-            lower_bound = datetime.datetime(year, month, day, start_hour, 0, 0).timestamp()
-        if end_hour is not None:
-            upper_bound = datetime.datetime(year, month, day, end_hour, 0, 0).timestamp()
-
-        logs = []
-        count_log = 0
-
-        with open(path, "r", encoding="utf-8") as f:
+    def ndjson_read(self, from_: datetime, to: Optional[datetime], group_by: str):
+        res = []
+        with open(self._file_path+"2025_5_27/"+"2_60.ndjson") as f:
             for line in f:
-                try:
-                    log = json.loads(line)
-                except Exception:
-                    continue
+                res.append(json.loads(line))
+        return res
 
-                if "time" not in log:
-                    continue
+        path_dirs = []
+        path_dirs.append(str(from_.year)+"_"+str(from_.month)+"_"+str(from_.day))
+        if to is not None:
+            path_dirs.append(str(to.year)+"_"+str(to.month)+"_"+str(to.day))
 
-                t = float(log["time"])
-
-                if start_hour is not None and end_hour is not None:
-                    if lower_bound <= t <= upper_bound:
-                        logs.append(log)
-                    elif t > upper_bound:
-                        break
-                else:
-                    logs.append(log)
-
-                count_log += 1
-                if depth is not None and count_log >= depth:
-                    break
-
-        return logs
-
+        group_by_options = {
+            "sec": None,
+            "min": None,
+            "10min": None,
+            "30min": None,
+            "hour": None,
+            "day": None,
+            "week": None,
+            "month": None,
+            "year": None
+        }
 
     def write(self, logs, hour, minute):
         today = datetime.date.today()
